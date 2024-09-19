@@ -1,0 +1,43 @@
+const sitemodel = require('../model/schema-antinflamatorios');
+const connection = require('../config/connection');
+const mongoose = require('mongoose');
+
+const classmongo = {
+    start: async () => {
+        connection();
+    },
+    add: async (dt) => {
+        try {
+            const novodado = new sitemodel({
+                quando: dt.quando,
+                farmacia: dt.farmacia,
+                nome: dt.nome,
+                precovelho: dt.precovelho,
+                preconovo: dt.preconovo,
+                precoregular: dt.precoregular,
+                urlproduto: dt.urlproduto
+
+            });
+            await novodado.save();
+            //await console.log(dt);
+        } catch (error) {
+            console.log('Não foi possivel salvar dados! => ' + error)
+        }
+    },
+    
+    contaregistros: async () => {
+        try {
+            let nrdados = await sitemodel.find({}).countDocuments();
+            let dadosraspados = Math.round(nrdados / 1000)
+            return dadosraspados
+            //console.log(`Total de registros: ${nrdados}`);
+        } catch (error) {
+            console.log('Deu erro! => ' + error)
+        }
+    },
+    close: async () => {
+        await console.log('Fechando conexão com MongoDB!')
+        await mongoose.connection.close();
+    }
+};
+module.exports = classmongo;
